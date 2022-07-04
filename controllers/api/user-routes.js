@@ -5,9 +5,11 @@ router.post('/', async (req, res) => {
   try {
     const newUser = await User.create({
       username: req.body.username,
-      password: req.body.password,
-      email: req.body.email
+      email: req.body.email,
+      password: req.body.password
     });
+
+    console.log("id: " + newUser.id + " and username: " + newUser.username)
 
     req.session.save(() => {
       req.session.user_id = newUser.id;
@@ -17,6 +19,7 @@ router.post('/', async (req, res) => {
       res.json(newUser);
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -37,7 +40,7 @@ router.post('/login', async (req, res) => {
     const validPassword = user.checkPassword(req.body.password);
 
     if (!validPassword) {
-      res.status(400).json({ message: 'No user account found!' });
+      res.status(400).json({ message: 'Incorrect Password!' });
       return;
     }
 
@@ -49,7 +52,8 @@ router.post('/login', async (req, res) => {
       res.json({ user, message: 'You are now logged in!' });
     });
   } catch (err) {
-    res.status(400).json({ message: 'No user account found!' });
+    console.log(err)
+    res.status(500).json(err);
   }
 });
 
